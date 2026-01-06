@@ -18,7 +18,7 @@ namespace topit {
     virtual p_t next(p_t prev) const = 0;
   };
   struct Dot: IDraw {
-    explicit Dot(p_t dd): d(dd) {}
+    Dot(p_t dd);
     p_t begin() const override;
     p_t next(p_t prev) const override;
     p_t d;
@@ -31,15 +31,16 @@ namespace topit {
     f_t rect;
   };
   struct FRect : IDraw {
+		FRect(p_t pos, int w, int h);
+		FRect(p_t a, p_t b);
     f_t rect;
-    p_t begin() const;
-    p_t next(p_t prev) const;
+    p_t begin() const override;
+    p_t next(p_t prev) const override;
 };
   p_t* extend(const p_t* pts, size_t s, p_t fill);
   void extend(p_t** pts, size_t& s, p_t fill);
   void append(const IDraw* sh, p_t** ppts, size_t& s);
   f_t frame(const p_t * pts, size_t s);
-  f_t frame(const Layers& ls);
   char * canvas(f_t fr, char fill);
   void paint(p_t p, char* cnv, f_t fr, char fill);
   void flush(std::ostream& os, const char* cnv, f_t fr);
@@ -48,6 +49,7 @@ namespace topit {
     ~Layers();
     Layers(const Layers&);
     Layers(Layers&&) noexcept;
+    Layers& operator=(const Layers& other);
     Layers& operator=(Layers&&) noexcept;
 
     void append(const IDraw & dr);
@@ -77,6 +79,7 @@ namespace topit {
       p_t * pts_;
       size_t * sizes_;
   };
+	f_t frame(const Layers& ls);
 }
 
 void topit::Layers::append(const IDraw& dr) { // dr - фигура
@@ -259,7 +262,14 @@ topit::f_t topit::frame(const p_t* pts, size_t s) {
 }
 
 topit::f_t topit::frame(const Layers& ls) {
-  return topit::frame(ls.pts_, ls.points_);
+  if (ls.points() == 0) throw std::logic_error("No points in Layers");
+	p_t* pts = new p_t[ls.points()];
+	for (size_t i = 0; i < ls.points(); ++i) {
+        pts[i] = ls.point(i);
+    }
+    f_t fr = topit::frame(pts, ls.points());
+    delete[] pts;
+    return fr;
 }
 
 topit::FRect::FRect(p_t pos, int w, int h): // левый нижний угол прямоугольника
