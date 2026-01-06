@@ -17,13 +17,20 @@ namespace topit {
     virtual p_t begin() const = 0;
     virtual p_t next(p_t prev) const = 0;
   };
-  struct Dot: IDraw {
+  struct Dot : IDraw {
     Dot(p_t dd);
     p_t begin() const override;
     p_t next(p_t prev) const override;
     p_t d;
   };
-  struct Rect: IDraw {
+  struct VLine : IDraw {
+    VLine(p_t start, int length);
+    p_t begin() const override;
+    p_t next(p_t prev) const override;
+    int len;
+    p_t start_point;
+  };
+  struct Rect : IDraw {
     Rect(p_t pos, int w, int h);
     Rect(p_t a, p_t b);
     p_t begin() const override;
@@ -346,6 +353,34 @@ topit::p_t topit::Dot::next(p_t prev) const {
   return d;
 }
 
+topit::VLine::VLine(p_t start, int length):
+  IDraw(),
+  start_point(start),
+  len(length)
+  {
+    if (len <= 0) {
+      throw std::logic_error("Length must be > 0");
+    }
+  }
+
+topit::p_t topit::VLine::begin() const {
+  return start_point;
+}
+
+topit::p_t topit::VLine::next(p_t prev) const {
+  if (prev.x != start_point.x) {
+    throw std::logic_error("VLine error: bad x");
+  }
+  int idx = prev.y - start_point.y;
+  if (idx < 0 || static_cast<size_t>(idx) >= len) {
+    throw std::logic_error("VLine error: point outside line");
+  }
+  if (static_cast<size_t>(idx + 1) < len) {
+    return {start_point.x, prev.y + 1};
+  }
+  return start_point;
+}
+
 size_t topit::rows(f_t fr) {
   return static_cast<size_t>(fr.bb.y - fr.aa.y + 1);
 }
@@ -365,18 +400,20 @@ bool topit::operator!=(p_t a, p_t b) {
 int main() {
   using namespace topit;
   int err = 0;
-  IDraw* shp[3] = {};
+  IDraw* shp[5] = {};
   Layers layers;
   try {
-    shp[0] = new FRect({-10, -4}, 7, 7);
-    shp[1] = new FRect({3, 4}, 10, 11);
-    shp[2] = new Rect({-3, -2}, 4, 5);
-    for (size_t i = 0; i < 3; ++i) {
+    shp[0] = new Dot({2, 3});
+    shp[1] = new FRect({-10, -4}, 7, 7);
+    shp[2] = new FRect({3, 4}, 10, 11);
+    shp[3] = new Rect({-3, -2}, 4, 5);
+    shp[4] = new VLine({2, 4}, 3);
+    for (size_t i = 0; i < 5; ++i) {
       layers.append(*(shp[i]));
     }
     f_t fr = layers.frame();
     char * cnv = canvas(fr, '.');
-    const char * brush = "#*%";
+    const char * brush = "@#*%|";
     for (size_t k = 0; k < layers.layers(); ++k) {
       size_t start = layers.start(k);
       size_t end = layers.end(k);
@@ -393,5 +430,7 @@ int main() {
   delete shp[0];
   delete shp[1];
   delete shp[2];
+  delete shp[3];
+  delete shp[4];
   return err;
 }
