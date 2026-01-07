@@ -1,6 +1,5 @@
-#include <iostream>
-#include <stdexcept>
-#include <algorithm>
+#ifndef ASCII_DRAW_HPP
+#define ASCII_DRAW_HPP
 #include "geom.hpp"
 #include "idraw.hpp"
 #include "dot.hpp"
@@ -8,9 +7,6 @@
 #include "frect.hpp"
 #include "canvas.hpp"
 #include "hline.hpp"
+#include "square.hpp"
 
-int main() {
-  using namespace topit;
-
-  return err;
-}
+#endif

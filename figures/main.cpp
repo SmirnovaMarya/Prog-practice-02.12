@@ -1,14 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <algorithm>
-#include "geom.hpp"
-#include "idraw.hpp"
-#include "dot.hpp"
-#include "rect.hpp"
-#include "frect.hpp"
-#include "canvas.hpp"
-#include "hline.hpp"
-#include "square.hpp"
+#include "ascii_draw.hpp"
 
 int main() {
   using namespace topit;
@@ -16,7 +9,7 @@ int main() {
   IDraw* shp[6] = {};
   Layers layers;
   try {
-    shp[0] = new Dot({2, 3});
+    shp[0] = new Dot({-7, -9});
     shp[1] = new FRect({-10, -4}, 7, 7);
     shp[2] = new FRect({3, 4}, 10, 11);
     shp[3] = new Rect({-3, -2}, 4, 5);

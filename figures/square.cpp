@@ -20,10 +20,14 @@ topit::p_t topit::Square::next(p_t prev) const {
   {
     throw std::logic_error("Square: a bad point");
   }
-  if (prev.x < start.x + side - 1) {
+  if (prev.y == start.y && prev.x < start.x + side - 1) {
     return {prev.x + 1, prev.y};
-  } else if (prev.y < start.y + side - 1) {
-    return {start.x, prev.y + 1};
+  } else if (prev.x == start.x + side -1 && prev.y < start.y + side - 1) {
+    return {prev.x, prev.y + 1};
+  } else if (prev.y == start.y + side - 1 && prev.x > start.x) {
+    return {prev.x - 1, prev.y};
+  } else if (prev.x == start.x && prev.y > start.y) {
+    return {prev.x, prev.y - 1};
   } else {
     return start;
   }

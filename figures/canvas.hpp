@@ -2,6 +2,7 @@
 #define CANVAS_HPP
 #include "geom.hpp"
 #include "idraw.hpp"
+#include <iostream>
 
 namespace topit {
   char * canvas(f_t fr, char fill);
@@ -42,6 +43,7 @@ namespace topit {
       p_t * pts_;
       size_t * sizes_;
   };
+  f_t frame(const p_t* pts, size_t s);
 	f_t frame(const Layers& ls);
 }
 

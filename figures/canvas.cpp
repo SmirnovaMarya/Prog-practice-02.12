@@ -1,7 +1,9 @@
 #include <iostream>
 #include <algorithm>
+#include "canvas.hpp"
 #include "frect.hpp"
 #include "geom.hpp"
+
 
 void topit::paint(p_t p, char* cnv, f_t fr, char fill) { //координата, которую нужно нарисовать, холст, рамка, символ заполнения
   if (p.x < fr.aa.x || p.x > fr.bb.x || p.y < fr.aa.y || p.y > fr.bb.y) {
